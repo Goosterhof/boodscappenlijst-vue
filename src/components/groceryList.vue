@@ -13,15 +13,28 @@
             {{grocery.name}}
           </td>
           <td>
-            €{{(Math.round(grocery.price * 100) / 100).toFixed(2)}}
+            <!-- 
+              iets * 100 / 100 = iets 
+              is in dit geval dus niet nodig
+            -->
+            €{{grocery.price.toFixed(2)}}
           </td>
           <td>
-            <input id="amount" type="number" min="0" v-model="grocery.amount"
-              oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
-            >
+            <!-- Je kan v-model.number gebruiken om de waarde om te zetten naar een number -->
+            <input id="amount" type="number" min="0" v-model.number="grocery.amount">
+            <!-- 
+              oninput is oude syntax. Nieuwe syntax gebruik je @input 
+              this hoef je nooit aan te geven in de template, die heeft de this context al
+              En daarnaast doet deze @input niks
+            -->
+            <!-- @input="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" -->
           </td>
           <td>
-            €{{(Math.round(grocery.subTotal * 100) / 100).toFixed(2)}} 
+            <!-- 
+              iets * 100 / 100 = iets 
+              is in dit geval dus niet nodig
+            -->
+            €{{grocery.subTotal.toFixed(2)}} 
           </td>
         </tr>
         <tr>
@@ -79,9 +92,15 @@ export default {
   methods: {
     calculateTotal() {
       this.total=0;
-      for (let i = 0; i < this.groceries.length; i++) {
-        this.groceries[i].subTotal = this.groceries[i].amount * this.groceries[i].price;
-        this.total = this.total + this.groceries[i].subTotal;
+      // For of loop is leesbaarder
+      // for (let i = 0; i < this.groceries.length; i++) {
+      //   this.groceries[i].subTotal = this.groceries[i].amount * this.groceries[i].price;
+      //   this.total = this.total + this.groceries[i].subTotal;
+      // }
+
+      for (const grocery of this.groceries) {
+        grocery.subTotal = grocery.amount * grocery.price
+        this.total += grocery.subTotal
       }
     }
   }
